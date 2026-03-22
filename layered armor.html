@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MHW - Layered Armor Browser</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./layered-armor.css">
+</head>
+<body>
+<header>
+  <div class="logo">Monster Hunter World</div>
+  <div class="logo" style="font-size:clamp(1rem,2.5vw,1.6rem); color:var(--accent); margin-top:0.2rem;">Layered Armor Archive</div>
+  <div class="subtitle">Iceborne - Complete Collection</div>
+</header>
+
+<div class="search-wrap">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input type="text" id="search" placeholder="Rechercher une armure..." autocomplete="off" spellcheck="false">
+</div>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-filter="all">Tout</button>
+  <button class="filter-btn" data-filter="layered">Layered</button>
+  <button class="filter-btn" data-filter="plus">Plus (+)</button>
+  <button class="filter-btn" data-filter="alpha">α</button>
+  <button class="filter-btn" data-filter="beta">β</button>
+  <button class="filter-btn" data-filter="gamma">γ</button>
+</div>
+
+<div class="stats-bar" id="stats">Chargement...</div>
+
+<div class="grid" id="grid">
+  <div class="no-results" id="no-results">
+    <div class="icon">IMG</div>
+    <p>Aucune armure trouvee</p>
+  </div>
+</div>
+
+<button id="back-to-top" class="back-to-top" type="button" aria-label="Remonter en haut">
+  ↑
+</button>
+
+<script>
+const assetVersion = "20260322-2";
+
+function loadLocalScript(src) {
+  return new Promise((resolve, reject) => {
+    const trySources = [`${src}?v=${assetVersion}`, src];
+
+    function tryNext() {
+      const nextSrc = trySources.shift();
+      if (!nextSrc) {
+        reject(new Error(`Impossible de charger ${src}`));
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = nextSrc;
+      script.onload = resolve;
+      script.onerror = tryNext;
+      document.body.appendChild(script);
+    }
+
+    tryNext();
+  });
+}
+
+loadLocalScript("./layered-armor.js")
+  .catch((error) => {
+    const stats = document.getElementById("stats");
+    const noResults = document.getElementById("no-results");
+    stats.textContent = "Erreur de chargement des fichiers locaux";
+    noResults.style.display = "block";
+    noResults.querySelector("p").textContent = error.message;
+  });
+</script>
+</body>
+</html>
